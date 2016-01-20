@@ -103,7 +103,8 @@ function formatSentence (sentenceArr, connectingWordsPath) {
   sentenceArr.forEach(function (sentence, index) {
     sentenceArr[index] = connectingWords[index].toCap() + ', ' + sentence;
   });
-  return sentenceArr.join(' ').toCap();
+  var finalSentence = sentenceArr.join(' ').toCap();
+  return finalSentence.replace(/\s*\[.+\]\s*/, ' ');
 }
 
 var url = process.argv[2];
