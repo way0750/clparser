@@ -1,0 +1,8 @@
+Research, design and develop highly scalable web applications and web services using technology stacks that include Java, JavaScript, CSS3, and HTML5. 
+Work closely with product owners, designers, developers, architects, and quality engineers to develop innovative solutions that solve business problems. 
+Resolve complex technical issues and drive innovation that improves user engagement, system availability, resiliency, and performance. 
+Required Skills/Experience:
+Strong JavaScript/CSS/HTML5 experience
+Proven record of delivering high quality on time
+Solid OOP fundamentals
+Full stack experience with deep JavaScript/HTML/CSS would be ideal
