@@ -2,10 +2,13 @@ this is a sentence with this tech HTML!!!!!
 this is a sentence with this tech HTML00000!!!!!
 this is a sentence with this tech OOP!!!!!
 
-this is a sentence with this tech aslkfdhlakjshdflkahsdfjkl!!!!!
-
-this is a sentence with this tech JavaScript!!!!!
-this is a sentence with this tech CSS!!!!!
-this is a sentence with this tech CSS JavaScript !!!!!
+I have design modern interfaces in Angular.js with HTML5 and CSS3.
+I am well versed in modern front-end standard such as: HTML5 and CSS3.
 
 this is a sentence with this tech aslkfdhlakjshdflkahsdfjkl!!!!!
+
+I have taken a deep dive to sharpen my JavaScript skill.
+I am an expert in JavaScript.
+
+this is a sentence with this tech aslkfdhlakjshdflkahsdfjkl!!!!!
+

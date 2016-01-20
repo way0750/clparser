@@ -21,6 +21,5 @@ Chai
 Mocha
 Node
 Material
-Git
 Twitter
 API
