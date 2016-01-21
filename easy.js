@@ -1,5 +1,6 @@
 var fileSystem = require('fs');
 var request = require('request');
+var PDFDocument = require('pdfkit');
 
 String.prototype.toCap = function () {
   return this[0].toUpperCase() + this.slice(1);
@@ -8,7 +9,7 @@ String.prototype.toCap = function () {
 
 var makeMatchingMatrix = function (skillPath, sentencePath, requirementPathOrHTML, isUsingHTML) {
   var sentenceArr = fileSystem.readFileSync(sentencePath, 'utf8').match(/.+/g);
-  var mySkillArr = fileSystem.readFileSync(skillPath, 'utf8').toLowerCase().match(/\w+/g);
+  var mySkillArr = fileSystem.readFileSync(skillPath, 'utf8').toLowerCase().match(/.+/g);
   var requirement;
   if (isUsingHTML) {
     requirement = requirementPathOrHTML;
@@ -73,7 +74,7 @@ function selectSentence (skillPath, sentencePath, requirementPathOrHTML, isUsing
     });
     
     if (stillExistSentences.length === 0 ) {
-      arr.push('\n\n\t!!!!!for ' + techName + ' you still need to write a sentence@@@@@@@@@@@@@@@@@@@@@@@@@\n\n');
+      arr.push('@@@@@@@@@@@for ' + techName + ' you still need to write a sentence @@@@@@@@@@@');
     } else {
       var randomSentenceID = random(stillExistSentences);
       var sentence = sentenceArr[randomSentenceID];
@@ -101,20 +102,66 @@ function formatSentence (sentenceArr, connectingWordsPath) {
 
   var connectingWords = fileSystem.readFileSync(connectingWordsPath, 'utf8').toLowerCase().match(/.+/g);
   sentenceArr.forEach(function (sentence, index) {
-    sentenceArr[index] = connectingWords[index].toCap() + ', ' + sentence;
+    if (!/@@@@@@@@@@@/.test(sentence)){
+      sentenceArr[index] = connectingWords.shift().toCap() + ', ' + sentence;
+    }
   });
+  
   var finalSentence = sentenceArr.join(' ').toCap();
+
   return finalSentence.replace(/\s*\[.+\]\s*/, ' ');
 }
 
-var url = process.argv[2];
+function outputPDF (textObj) {
+  var doc = new PDFDocument();
 
+  doc.fontSize = 12;
+  var paraFormatObj = {
+    lineGap: 2,
+    paragraphGap: 6,
+    indent: 20
+  };
+  var headOrFootFormat = {
+    lineGap: 2,
+    paragraphGap: 6
+  };
+
+  // doc.text(dear, headOrFootFormat);
+  if (textObj.address) {doc.text(textObj.address, headOrFootFormat);}
+  for (var i = 0 ; i < textObj.paragraphs.length; i++){
+    doc.text(textObj.paragraphs[i], paraFormatObj);
+  }
+  if (textObj.thankYou) {doc.text(textObj.thankYou, paraFormatObj);}
+  if (textObj.myName) {doc.text(textObj.myName, paraFormatObj);}
+
+
+  // doc.text(thankYou, paraFormatObj);
+  // doc.text(myName, paraFormatObj);
+
+  var fileName = (new Date()).toJSON();
+  doc.pipe(fileSystem.createWriteStream('./'+fileName+'.pdf'));
+
+  doc.end();
+}
+
+var textObj = {
+  address: 'Dear Blah Blah Blah Hiring Team:',
+  thankYou: 'Thank you for your time',
+  myName: 'Huiqiang Huang',
+};
+
+var url = process.argv[2];
+var finalSentences;
 if (url) {
   request(url, function (error, data) {
-    var finalSentences = selectSentence('./mytechlist.txt', 'sentence.txt', data.body, true);
+    finalSentences = selectSentence('./mytechlist.txt', 'sentence.txt', data.body, true);
+    textObj.paragraphs = [finalSentences.join(' ')];
     console.log(formatSentence(finalSentences, './connectingWords.txt'));  
+    outputPDF(textObj);
   });
 } else {
-  var finalSentences = selectSentence('./mytechlist.txt', 'sentence.txt', './req.txt');
+  finalSentences = selectSentence('./mytechlist.txt', 'sentence.txt', './req.txt');
+  textObj.paragraphs = [finalSentences.join(' ')];
   console.log(formatSentence(finalSentences, './connectingWords.txt'));  
+  outputPDF(textObj);
 }
