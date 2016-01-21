@@ -7,15 +7,9 @@ String.prototype.toCap = function () {
 };
 
 
-var makeMatchingMatrix = function (skillPath, sentencePath, requirementPathOrHTML, isUsingHTML) {
+var makeMatchingMatrix = function (skillPath, sentencePath, requirement) {
   var sentenceArr = fileSystem.readFileSync(sentencePath, 'utf8').match(/.+/g);
   var mySkillArr = fileSystem.readFileSync(skillPath, 'utf8').toLowerCase().match(/.+/g);
-  var requirement;
-  if (isUsingHTML) {
-    requirement = requirementPathOrHTML;
-  } else {
-    requirement = fileSystem.readFileSync(requirementPathOrHTML, 'utf8').toLowerCase();
-  }
   var skillObj = {};
   mySkillArr = mySkillArr.filter(function (skillName) {
     if (requirement.search(new RegExp(skillName, 'i')) > -1) {
@@ -40,7 +34,6 @@ var makeMatchingMatrix = function (skillPath, sentencePath, requirementPathOrHTM
   mySkillArr = mySkillArr.sort(function (skill1, skill2) {
     return skillObj[skill1].length - skillObj[skill2].length;
   });
-
 
   return {
     skillObj: skillObj,
@@ -144,24 +137,9 @@ function outputPDF (textObj) {
   doc.end();
 }
 
-var textObj = {
-  address: 'Dear Blah Blah Blah Hiring Team:',
-  thankYou: 'Thank you for your time',
-  myName: 'Huiqiang Huang',
+module.exports = {
+  outputPDF: outputPDF,
+  makeMatchingMatrix: makeMatchingMatrix,
+  selectSentence: selectSentence,  
+  formatSentence: formatSentence
 };
-
-var url = process.argv[2];
-var finalSentences;
-if (url) {
-  request(url, function (error, data) {
-    finalSentences = selectSentence('./mytechlist.txt', 'sentence.txt', data.body, true);
-    textObj.paragraphs = [finalSentences.join(' ')];
-    console.log(formatSentence(finalSentences, './connectingWords.txt'));  
-    outputPDF(textObj);
-  });
-} else {
-  finalSentences = selectSentence('./mytechlist.txt', 'sentence.txt', './req.txt');
-  textObj.paragraphs = [finalSentences.join(' ')];
-  console.log(formatSentence(finalSentences, './connectingWords.txt'));  
-  outputPDF(textObj);
-}
