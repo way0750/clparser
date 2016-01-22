@@ -15,23 +15,30 @@ app.post('/newcover', function (req, res, next) {
   var source = req.body.source;
   if (req.body.isUrl) {
     request(source, function (error, data) {
-      var firstPara = 'this is firstPara';
-      var secondPara = 'this is secondPara';
-      var techSkills = util.selectSentence('mytechlist.txt', 'sentence.txt', data.body);
-      techSkills = util.formatSentence(techSkills, 'connectingWords.txt');
-      res.send([firstPara, secondPara, techSkills]);
+      var mission = 'this is mission';
+      // ,'content/mytechlist.txt'
+      var techSkills = util.selectSentence(['content/companyConcernList.txt', 'content/mytechlist.txt'], 'content/companyConcernSentence.txt', data.body, {limitSentenceAmount: 3});
+      // var techSkills = techSkills.concat(util.selectSentence(['content/mytechlist.txt'], 'content/techSentence.txt', data.body));
+      // var techSkills = util.selectSentence(['content/mytechlist.txt'], 'content/techSentence.txt', data.body, {limitSentenceAmount: 1});
+
+      techSkills = util.formatSentence(techSkills, 'content/connectingWords.txt');
+      var lastPara = 'this is last';
+    
+      res.send([mission, techSkills, lastPara]);
     });
   } else {
-    var firstPara = 'this is firstPara';
-    var secondPara = 'this is secondPara';
-    var techSkills = util.selectSentence('mytechlist.txt', 'sentence.txt', source);
-    techSkills = util.formatSentence(techSkills, 'connectingWords.txt');
-    res.send([firstPara, secondPara, techSkills]);
+    var mission = 'this is mission';
+    var techSkills = util.selectSentence(['content/companyConcernList.txt','content/mytechlist.txt'], 'content/companyConcernSentence.txt', source, {limitSentenceAmount: 3});
+    // techSkills = techSkills.concat(util.selectSentence(['content/mytechlist.txt'], 'content/techSentence.txt', source));
+  
+    techSkills = util.formatSentence(techSkills, 'content/connectingWords.txt');
+    var lastPara = 'this is last';
+    res.send([mission, techSkills, lastPara]);
   }
 });
 
 app.post('/pdf', function (req, res, next) {
-  console.log(req.body);
+
   util.outputPDF(req.body);
   res.send('check local folder');
 });

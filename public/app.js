@@ -2,7 +2,8 @@
   angular.module('coverLetter', [])
   .controller('coverLetterCTRL',function ($scope, $http) {
     $scope.link = undefined;
-    $scope.address = "Dear @@@@@ recruitment team:";
+    var placeholdForCompanyName = '@@@@@';
+    $scope.address =  placeholdForCompanyName;
     $scope.thankYou = "Thank you very much for your time";
     $scope.myName = "Huiqiang Huang";
     $scope.makeCoverLetter = function (source, isUrl) {
@@ -26,7 +27,12 @@
         $scope.coverLetter = res.data.map(function (paragraph) {
           return{text: paragraph};
         });
+        $scope.address = placeholdForCompanyName;
       });
+    };
+
+    String.prototype.toCap = function () {
+      return this[0].toUpperCase() + this.slice(1);
     };
 
     var allowToOutputPDF = function (paragraphArr) {
@@ -34,8 +40,10 @@
         $scope.PSA = 'you need to actually write that cover letter!!!';
         return false;
       }
-
-      var completeText = $scope.address + $scope.thankYou + $scope.myName + $scope.coverLetter.join('');
+      var completeText = $scope.coverLetter.map(function (textObj) {
+        return textObj.text;
+      });
+      completeText += $scope.address + $scope.thankYou + $scope.myName;
       if (/@/.test(completeText)){
         $scope.PSA = '@ found !!!you did not modify all the required part of the letter';
         return false;
@@ -48,26 +56,26 @@
       var paragraphArr = $scope.coverLetter.map(function (strObj) {
         return strObj.text;
       });
-      if (!allowToOutputPDF(paragraphArr)){
-        console.log('error!, not allowed to outputPDF!!!');
-        return;
+      $scope.address = $scope.address.toCap();
+      if (allowToOutputPDF(paragraphArr)){
+        var textObj = {
+          company: $scope.address,
+          address: 'Dear ' + $scope.address + ' recruitment team:',
+          thankYou: $scope.thankYou,
+          myName: $scope.myName,
+          paragraphs: paragraphArr
+        };
+        $scope.PSA = 'trying to make that pdf...';
+        $http({
+          method: 'POST',
+          url: '/pdf',
+          data: textObj
+        }).then(function (data) {
+          $scope.PSA = 'pdf done';
+        }).catch(function (err) {
+          $scope.PSA = 'got error' + err;
+        });
       }
-      var textObj = {
-        address: $scope.address,
-        thankYou: $scope.thankYou,
-        myName: $scope.myName,
-        paragraphs: paragraphArr
-      };
-      $scope.PSA = 'trying to make that pdf...';
-      $http({
-        method: 'POST',
-        url: '/pdf',
-        data: textObj
-      }).then(function (data) {
-        $scope.PSA = 'pdf done';
-      }).catch(function (err) {
-        $scope.PSA = 'got error' + err;
-      });
     };
   });
 })();

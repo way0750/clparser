@@ -7,13 +7,22 @@ String.prototype.toCap = function () {
 };
 
 
-var makeMatchingMatrix = function (skillPath, sentencePath, requirement) {
+var makeMatchingMatrix = function (skillPathArr, sentencePath, requirement) {
   var sentenceArr = fileSystem.readFileSync(sentencePath, 'utf8').match(/.+/g);
-  var mySkillArr = fileSystem.readFileSync(skillPath, 'utf8').toLowerCase().match(/.+/g);
+  var mySkillArr = skillPathArr.reduce (function (arr, skillPath) {
+    var skillArr = fileSystem.readFileSync(skillPath, 'utf8').toLowerCase().match(/.+/g);
+    return arr.concat(skillArr);
+  }, []);
   var skillObj = {};
   mySkillArr = mySkillArr.filter(function (skillName) {
-    if (requirement.search(new RegExp(skillName, 'i')) > -1) {
-      skillObj[skillName] = [];
+    var found = requirement.match(new RegExp('\\b'+skillName, 'ig'));
+    if (found) {
+      // skillObj[skillName] = [];
+      console.log('found this many times:', skillName, found, found.length);
+      skillObj[skillName] = {
+        sentenceList : [],
+        weight: found.length
+      };
       return true;
     } else {
       return false;
@@ -24,17 +33,17 @@ var makeMatchingMatrix = function (skillPath, sentencePath, requirement) {
   sentenceArr.forEach(function (sentence, index) {
     sentenceObj[index] = [];
     mySkillArr.forEach(function (skillName) {
-      if (sentence.search(new RegExp(skillName, 'i')) > -1) {
+      if (sentence.search(new RegExp('\\b'+skillName, 'i')) > -1) {
         sentenceObj[index].push(skillName);
-        skillObj[skillName].push(index);
+        skillObj[skillName].sentenceList.push(index);
       }
     });
   });
 
   mySkillArr = mySkillArr.sort(function (skill1, skill2) {
-    return skillObj[skill1].length - skillObj[skill2].length;
+    return skillObj[skill1].sentenceList.length - skillObj[skill2].sentenceList.length;
   });
-
+  console.log('matched skills:', mySkillArr);
   return {
     skillObj: skillObj,
     skillArr: mySkillArr,
@@ -48,98 +57,135 @@ function random (arr) {
   return arr[index];
 }
 
-function selectSentence (skillPath, sentencePath, requirementPathOrHTML, isUsingHTML) {
-  var techObj, sentenceObj, matrix;
-  matrix = makeMatchingMatrix(skillPath, sentencePath, requirementPathOrHTML, isUsingHTML);
+Array.prototype.maxBy = function (cb) {
+  return this.reduce(function (v1, v2) {
+    return cb(v1) > cb(v2) ? v1 : v2;
+  });
+};
 
-  techObj     = matrix.skillObj;
-  myTechList  = matrix.skillArr;
+function selectSentence (skillPathArr, sentencePath, requirementPathOrHTML, optionObj) {
+  var skillObj, sentenceObj, matrix;
+  matrix = makeMatchingMatrix(skillPathArr, sentencePath, requirementPathOrHTML, optionObj);
+
+  skillObj     = matrix.skillObj;
+  mySkillArr  = matrix.skillArr;
   sentenceObj = matrix.sentenceObj;
   sentenceArr = matrix.sentenceArr;
-  
-  var finalSentences = myTechList.reduce(function (arr, techName) {
-    if (!techObj[techName]) {
+
+  var sentenceAmountLimit = optionObj && optionObj.limitSentenceAmount;
+
+  var finalSentences = mySkillArr.reduce(function (arr, techName) {
+    if (!skillObj[techName]) {
       return arr;
     }
 
-    var stillExistSentences = techObj[techName].filter(function(sentenceID) {
+    var stillExistSentences = skillObj[techName].sentenceList.filter(function(sentenceID) {
       return sentenceObj[sentenceID];
     });
     
     if (stillExistSentences.length === 0 ) {
-      arr.push('@@@@@@@@@@@for ' + techName + ' you still need to write a sentence @@@@@@@@@@@');
+      arr.push({
+        sentence: '   <<<@@@for ' + techName + ' you still need to write a sentence @@@>>>   ',
+        weight: skillObj[techName].weight
+      });
     } else {
-      var randomSentenceID = random(stillExistSentences);
-      var sentence = sentenceArr[randomSentenceID];
-      arr.push(sentence);
+      var sentenceID;
+      if (sentenceAmountLimit) {
+        sentenceID = stillExistSentences.maxBy(function (id) {
+          return sentenceObj[id].length;
+        });
+      } else {
+        sentenceID = random(stillExistSentences);
+      }
+      var sentence = sentenceArr[sentenceID];
+      console.log('this skill has this many sentences:' , techName, skillObj[techName].weight, sentenceObj[sentenceID].length );
 
-      sentenceObj[randomSentenceID].forEach(function (techName) {
+      var dataObj = ({
+        sentence: sentence,
+        // weight: sentenceObj[sentenceID].length + skillObj[techName].weight
+        weight: 0
+      });
+
+      sentenceObj[sentenceID].forEach(function (techName) {
         //go through each tech and delete all of its sentenceID from the sentenceObj;
-        //then delete itself form the techObj;
-        techObj[techName].forEach(function (sentenceID) {
+        //then delete itself form the skillObj;
+        skillObj[techName].sentenceList.forEach(function (sentenceID) {
           delete sentenceObj[sentenceID];
         });
-        delete techObj[techName];
+        dataObj.weight += skillObj[techName].weight;
+        delete skillObj[techName];
       });
-    }
 
+      arr.push(dataObj);
+    }
     return arr;
 
   }, []);
 
-  return finalSentences;
+  finalSentences = finalSentences.sort(function (obj1, obj2) {
+    return obj1.weight < obj2.weight;
+  });
 
+  console.log('weight check:', finalSentences);
+
+  finalSentences =  finalSentences.map(function (obj) {
+    return obj.sentence;
+  });
+
+  return sentenceAmountLimit ? finalSentences.slice(0, sentenceAmountLimit) : finalSentences;
+  // return finalSentences;
 }
 
 function formatSentence (sentenceArr, connectingWordsPath) {
 
   var connectingWords = fileSystem.readFileSync(connectingWordsPath, 'utf8').toLowerCase().match(/.+/g);
   sentenceArr.forEach(function (sentence, index) {
-    if (!/@@@@@@@@@@@/.test(sentence)){
+    if (!/@/.test(sentence)){
       sentenceArr[index] = connectingWords.shift().toCap() + ', ' + sentence;
     }
   });
-  
   var finalSentence = sentenceArr.join(' ').toCap();
 
-  return finalSentence.replace(/\s*\[.+\]\s*/, ' ');
+  return finalSentence.replace(/\s*\[[^\[]+\]\s*/g, ' ');
 }
 
 function outputPDF (textObj) {
   var doc = new PDFDocument();
 
   doc.fontSize = 12;
+
   var paraFormatObj = {
     lineGap: 2,
     paragraphGap: 6,
     indent: 20
   };
+
   var headOrFootFormat = {
     lineGap: 2,
     paragraphGap: 6
   };
 
-  // doc.text(dear, headOrFootFormat);
   if (textObj.address) {doc.text(textObj.address, headOrFootFormat);}
+
   for (var i = 0 ; i < textObj.paragraphs.length; i++){
     doc.text(textObj.paragraphs[i], paraFormatObj);
   }
+
   if (textObj.thankYou) {doc.text(textObj.thankYou, paraFormatObj);}
   if (textObj.myName) {doc.text(textObj.myName, paraFormatObj);}
 
-
-  // doc.text(thankYou, paraFormatObj);
-  // doc.text(myName, paraFormatObj);
-
-  var fileName = (new Date()).toJSON();
-  doc.pipe(fileSystem.createWriteStream('./'+fileName+'.pdf'));
+  doc.pipe(fileSystem.createWriteStream('./PDF/'+textObj.company+' cover letter.pdf'));
 
   doc.end();
 }
 
+
+function companyConcern () {
+
+};
+
 module.exports = {
   outputPDF: outputPDF,
-  makeMatchingMatrix: makeMatchingMatrix,
   selectSentence: selectSentence,  
   formatSentence: formatSentence
 };

@@ -12,7 +12,7 @@
     <button ng-click="makeCoverLetter(pastedContent)">upload requirement</button><br>
   </div>
   <h1 ng-show="PSA">{{PSA}}</h1>
-  <input type="text" size='50' ng-model='address'><br>
+  <pre>Dear <input type="text" size='50' ng-model='address'> recruitment team:</pre><br>
   <div ng-repeat="paragraph in coverLetter">
       <textarea cols="100" rows="10" ng-model="paragraph.text">{{paragraph.text}}</textarea>
   </div>
