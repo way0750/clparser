@@ -21,7 +21,6 @@ Chai
 Mocha
 Node
 Material
-Twitter
 API
 rail
 AJAX

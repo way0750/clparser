@@ -123,10 +123,10 @@ function selectSentence (skillPathArr, sentencePath, requirementPathOrHTML, opti
   }, []);
 
   finalSentences = finalSentences.sort(function (obj1, obj2) {
-    return obj1.weight < obj2.weight;
+    return obj2.weight - obj1.weight;
   });
 
-  console.log('weight check:', finalSentences);
+  console.log('weight check: \n', finalSentences);
 
   finalSentences =  finalSentences.map(function (obj) {
     return obj.sentence;
