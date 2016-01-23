@@ -6,7 +6,6 @@ String.prototype.toCap = function () {
   return this[0].toUpperCase() + this.slice(1);
 };
 
-
 var makeMatchingMatrix = function (skillPathArr, sentencePath, requirement) {
   var sentenceArr = fileSystem.readFileSync(sentencePath, 'utf8').match(/.+/g);
   var mySkillArr = skillPathArr.reduce (function (arr, skillPath) {
@@ -63,64 +62,19 @@ Array.prototype.maxBy = function (cb) {
   });
 };
 
-function selectSentence (skillPathArr, sentencePath, requirementPathOrHTML, optionObj) {
+function makeSentence (skillPathArr, sentencePath, requirement, optionObj) {
   var skillObj, sentenceObj, matrix;
-  matrix = makeMatchingMatrix(skillPathArr, sentencePath, requirementPathOrHTML, optionObj);
+  matrix = makeMatchingMatrix(skillPathArr, sentencePath, requirement, optionObj);
 
-  skillObj     = matrix.skillObj;
+  skillObj    = matrix.skillObj;
   mySkillArr  = matrix.skillArr;
   sentenceObj = matrix.sentenceObj;
   sentenceArr = matrix.sentenceArr;
 
   var sentenceAmountLimit = optionObj && optionObj.limitSentenceAmount;
 
-  var finalSentences = mySkillArr.reduce(function (arr, techName) {
-    if (!skillObj[techName]) {
-      return arr;
-    }
-
-    var stillExistSentences = skillObj[techName].sentenceList.filter(function(sentenceID) {
-      return sentenceObj[sentenceID];
-    });
-    
-    if (stillExistSentences.length === 0 ) {
-      arr.push({
-        sentence: '   <<<@@@for ' + techName + ' you still need to write a sentence @@@>>>   ',
-        weight: skillObj[techName].weight
-      });
-    } else {
-      var sentenceID;
-      if (sentenceAmountLimit) {
-        sentenceID = stillExistSentences.maxBy(function (id) {
-          return sentenceObj[id].length;
-        });
-      } else {
-        sentenceID = random(stillExistSentences);
-      }
-      var sentence = sentenceArr[sentenceID];
-      console.log('this skill has this many sentences:' , techName, skillObj[techName].weight, sentenceObj[sentenceID].length );
-
-      var dataObj = ({
-        sentence: sentence,
-        // weight: sentenceObj[sentenceID].length + skillObj[techName].weight
-        weight: 0
-      });
-
-      sentenceObj[sentenceID].forEach(function (techName) {
-        //go through each tech and delete all of its sentenceID from the sentenceObj;
-        //then delete itself form the skillObj;
-        skillObj[techName].sentenceList.forEach(function (sentenceID) {
-          delete sentenceObj[sentenceID];
-        });
-        dataObj.weight += skillObj[techName].weight;
-        delete skillObj[techName];
-      });
-
-      arr.push(dataObj);
-    }
-    return arr;
-
-  }, []);
+  //[obj, obj, obj]
+  var finalSentences = selectSentence(skillObj , mySkillArr , sentenceObj , sentenceArr, sentenceAmountLimit);
 
   finalSentences = finalSentences.sort(function (obj1, obj2) {
     return obj2.weight - obj1.weight;
@@ -133,25 +87,78 @@ function selectSentence (skillPathArr, sentencePath, requirementPathOrHTML, opti
   });
 
   return sentenceAmountLimit ? finalSentences.slice(0, sentenceAmountLimit) : finalSentences;
-  // return finalSentences;
+
+}
+
+function selectSentence (skillObj , mySkillArr , sentenceObj , sentenceArr, sentenceAmountLimit) {
+
+  return mySkillArr.reduce(function (arr, skillName) {
+    if (!skillObj[skillName]) {
+      return arr;
+    }
+
+    var stillExistSentences = skillObj[skillName].sentenceList.filter(function(sentenceID) {
+      return sentenceObj[sentenceID];
+    });
+    
+    if (stillExistSentences.length === 0 ) {
+      arr.push({
+        sentence: '   <<<@@@for ' + skillName + ' you still need to write a sentence @@@>>>   ',
+        weight: skillObj[skillName].weight
+      });
+    } else {
+      var sentenceID;
+      if (sentenceAmountLimit) {
+        sentenceID = stillExistSentences.maxBy(function (id) {
+          return sentenceObj[id].length;
+        });
+      } else {
+        sentenceID = random(stillExistSentences);
+      }
+      var sentence = sentenceArr[sentenceID];
+
+      console.log('this skill has this many sentences:' , skillName, skillObj[skillName].weight, sentenceObj[sentenceID].length );
+
+      var dataObj = ({
+        sentence: sentence,
+        weight: 0
+      });
+
+      sentenceObj[sentenceID].forEach(function (skillName) {
+        //go through each tech and delete all of its sentenceID from the sentenceObj;
+        //then delete itself form the skillObj;
+        skillObj[skillName].sentenceList.forEach(function (sentenceID) {
+          delete sentenceObj[sentenceID];
+        });
+        dataObj.weight += skillObj[skillName].weight;
+        delete skillObj[skillName];
+      });
+
+      arr.push(dataObj);
+    }
+    return arr;
+  }, []);
 }
 
 function formatSentence (sentenceArr, connectingWordsPath) {
-
-  var connectingWords = fileSystem.readFileSync(connectingWordsPath, 'utf8').toLowerCase().match(/.+/g);
+  var connectingWords;
+  var usingConnect = connectingWordsPath;
+  if (usingConnect) {
+    connectingWords = fileSystem.readFileSync(connectingWordsPath, 'utf8').toLowerCase().match(/.+/g);
+  }
   sentenceArr.forEach(function (sentence, index) {
+    sentence = sentence.replace(/\s*\[[^\[]+\]\s*/g, ' ');
     if (!/@/.test(sentence)){
-      sentenceArr[index] = connectingWords.shift().toCap() + ', ' + sentence;
+      var curConnect = usingConnect ? connectingWords.shift().toCap() + ', ' : '';
+      sentenceArr[index] =  curConnect + sentence;
     }
   });
-  var finalSentence = sentenceArr.join(' ').toCap();
 
-  return finalSentence.replace(/\s*\[[^\[]+\]\s*/g, ' ');
+  return sentenceArr;
 }
 
 function outputPDF (textObj) {
   var doc = new PDFDocument();
-
   doc.fontSize = 12;
 
   var paraFormatObj = {
@@ -167,25 +174,20 @@ function outputPDF (textObj) {
 
   if (textObj.address) {doc.text(textObj.address, headOrFootFormat);}
 
-  for (var i = 0 ; i < textObj.paragraphs.length; i++){
-    doc.text(textObj.paragraphs[i], paraFormatObj);
-  }
+  if (textObj.excitment) {doc.text(textObj.excitment, paraFormatObj);}
+  if (textObj.skill) {doc.text(textObj.skill, paraFormatObj);}
+  if (textObj.closing) {doc.text(textObj.closing, paraFormatObj);}
 
   if (textObj.thankYou) {doc.text(textObj.thankYou, paraFormatObj);}
   if (textObj.myName) {doc.text(textObj.myName, paraFormatObj);}
 
-  doc.pipe(fileSystem.createWriteStream('./PDF/'+textObj.company+' cover letter.pdf'));
-
+  doc.pipe(fileSystem.createWriteStream('./PDF/'+textObj.company+' Cover Letter.pdf'));
   doc.end();
 }
 
 
-function companyConcern () {
-
-};
-
 module.exports = {
   outputPDF: outputPDF,
-  selectSentence: selectSentence,  
+  makeSentence: makeSentence,  
   formatSentence: formatSentence
 };

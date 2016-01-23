@@ -1,11 +1,13 @@
 (function () {
-  angular.module('coverLetter', [])
-  .controller('coverLetterCTRL',function ($scope, $http) {
-    $scope.link = undefined;
-    var placeholdForCompanyName = '@@@@@';
-    $scope.address =  placeholdForCompanyName;
-    $scope.thankYou = "Thank you very much for your time";
-    $scope.myName = "Huiqiang Huang";
+  angular.module('coverLetter', ['ngMaterial'])
+  .controller('coverLetterCTRL',function ($scope, httpAPI, contentFormatter) {
+
+    $scope.coverLetter = {
+      company:  '@@@@@',
+      thankYou: "Thank you very much for your time",
+      myName: "Huiqiang Huang"
+    };
+
     $scope.makeCoverLetter = function (source, isUrl) {
       if (!source) {
         $scope.PSA = 'nothing to parse!';
@@ -15,67 +17,33 @@
         source = 'http://' + source;
       }
       $scope.PSA = 'thinking......';
-      $http({
-        method: 'POST',
-        url: '/newcover',
-        data: {
-          isUrl: isUrl,
-          source: source
-        }
-      }).then(function (res) {
+
+      httpAPI.makeCoverLetter(source, isUrl).then(function (data) {
         $scope.PSA = 'here you go....';
-        $scope.coverLetter = res.data.map(function (paragraph) {
-          return{text: paragraph};
-        });
-        $scope.address = placeholdForCompanyName;
+        console.log('so what is the new format?:\n', data);
+        $scope.coverLetter.excitment = contentFormatter.formatSkills(data.excitment);
+        $scope.coverLetter.closing = contentFormatter.formatSkills(data.closingStatement);
+        $scope.coverLetter.skill = contentFormatter.formatSkills(data.companyConcerns, data.myGeneralSkills, data.myTechSkills);
       });
+      
     };
 
-    String.prototype.toCap = function () {
-      return this[0].toUpperCase() + this.slice(1);
+
+    $scope.outputPDF = function (obj) {
+      var allowToOutputPDF = httpAPI.allowToOutputPDF(obj);
+      if (!allowToOutputPDF.permission){
+        $scope.PSA = allowToOutputPDF.PSA;
+        return;
+      }
+
+      contentFormatter.capitalizeSentences(obj);
+      contentFormatter.fixAddressAddCompanyName('Dear', obj, 'Recruitment Team:');
+
+      httpAPI.outputPDF(obj).then(function (data) {
+        $scope.PSA=data;
+      });
+
     };
 
-    var allowToOutputPDF = function (paragraphArr) {
-      if (!paragraphArr || paragraphArr.lenght === 0 ) {
-        $scope.PSA = 'you need to actually write that cover letter!!!';
-        return false;
-      }
-      var completeText = $scope.coverLetter.map(function (textObj) {
-        return textObj.text;
-      });
-      completeText += $scope.address + $scope.thankYou + $scope.myName;
-      if (/@/.test(completeText)){
-        $scope.PSA = '@ found !!!you did not modify all the required part of the letter';
-        return false;
-      }
-      return true;
-    };
-
-    $scope.outputPDF = function () {
-      $scope.coverLetter = $scope.coverLetter || [];
-      var paragraphArr = $scope.coverLetter.map(function (strObj) {
-        return strObj.text;
-      });
-      $scope.address = $scope.address.toCap();
-      if (allowToOutputPDF(paragraphArr)){
-        var textObj = {
-          company: $scope.address,
-          address: 'Dear ' + $scope.address + ' recruitment team:',
-          thankYou: $scope.thankYou,
-          myName: $scope.myName,
-          paragraphs: paragraphArr
-        };
-        $scope.PSA = 'trying to make that pdf...';
-        $http({
-          method: 'POST',
-          url: '/pdf',
-          data: textObj
-        }).then(function (data) {
-          $scope.PSA = 'pdf done';
-        }).catch(function (err) {
-          $scope.PSA = 'got error' + err;
-        });
-      }
-    };
   });
 })();

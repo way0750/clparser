@@ -1,3 +1,5 @@
 {
-  "ignore": ["phantomTemplate.js"]
+  "events": {
+    "crash": "rs"
+  }
 }

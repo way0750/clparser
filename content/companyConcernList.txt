@@ -42,6 +42,7 @@ responsive
 client side
 client-side
 front end
+frontend
 front-end
 user experience
 user-fac
@@ -52,6 +53,7 @@ ux
 server side
 server-side
 back end
+backend
 back-end
 
 the full

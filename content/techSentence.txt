@@ -1,15 +1,3 @@
-this is a sentence with this tech HTML!!!!!
-this is a sentence with this tech HTML00000!!!!!
-this is a sentence with this tech OOP!!!!!
-
-I have design modern interfaces in Angular.js with HTML5 and CSS3.
-I am well versed in modern front-end standard such as: HTML5 and CSS3.
-
-this is a sentence with this tech aslkfdhlakjshdflkahsdfjkl!!!!!
-
-I have taken a deep dive to sharpen my JavaScript skill.
-I am an expert in JavaScript.
-
-this is a sentence with this tech aslkfdhlakjshdflkahsdfjkl!!!!!
-
-[agile lean fast pace ruby rails] some usual hard worker stuffs rails rails rails rails rails rails rails rails rails rails rails rails
+[Angular HTML CSS jQuery D3 Material AJAX MVC Backbone] I have design modern interfaces in Angular.js with HTML5 and CSS3.
+[Angular HTML CSS jQuery D3 Material AJAX MVC Backbone] I am well versed in modern front-end standard such as: HTML5 and CSS3.
+[Express Ruby SQL Mongo Heroku Mongoose Passport Node API rail database data base RDBMS Postgre Sequelize] I have done a heavy ass back end.
