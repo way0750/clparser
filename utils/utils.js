@@ -66,8 +66,8 @@ function parseByURL (res, source, mission, lastPara, callback) {
 
 function parseJobOpening(req, res, next) {
   var source = req.body.source;
-  var mission = 'this is mission';
-  var lastPara = 'this is last';
+  var mission = 'I am a developer who loves creative problem solving and generating tangible results and @@@@ checkout glassdoor and crunchbase to believe in whatever they do';
+  var lastPara = 'I look forward to hear more detail about@@@ challenges and feature they are focusing on right now@@@@@, and show you how I can contribute to their development. ';
 
   if (req.body.isUrl) {
     parseByURL(res, source, mission, lastPara, makeSentence);

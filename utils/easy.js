@@ -12,11 +12,11 @@ var makeMatchingMatrix = function (skillPathArr, sentencePath, requirement) {
     var skillArr = fileSystem.readFileSync(skillPath, 'utf8').toLowerCase().match(/.+/g);
     return arr.concat(skillArr);
   }, []);
+
   var skillObj = {};
   mySkillArr = mySkillArr.filter(function (skillName) {
     var found = requirement.match(new RegExp('\\b'+skillName, 'ig'));
     if (found) {
-      // skillObj[skillName] = [];
       console.log('found this many times:', skillName, found, found.length);
       skillObj[skillName] = {
         sentenceList : [],
@@ -30,6 +30,7 @@ var makeMatchingMatrix = function (skillPathArr, sentencePath, requirement) {
 
   var sentenceObj = {};
   sentenceArr.forEach(function (sentence, index) {
+    sentence = sentence.replace(/\].+/, "");
     sentenceObj[index] = [];
     mySkillArr.forEach(function (skillName) {
       if (sentence.search(new RegExp('\\b'+skillName, 'i')) > -1) {
@@ -92,11 +93,12 @@ function makeSentence (skillPathArr, sentencePath, requirement, optionObj) {
 
 function selectSentence (skillObj , mySkillArr , sentenceObj , sentenceArr, sentenceAmountLimit) {
 
+  console.log('\n\n\n-------------------------------\n checking the', sentenceObj, '\n\n');
   return mySkillArr.reduce(function (arr, skillName) {
     if (!skillObj[skillName]) {
       return arr;
     }
-
+    
     var stillExistSentences = skillObj[skillName].sentenceList.filter(function(sentenceID) {
       return sentenceObj[sentenceID];
     });
@@ -116,8 +118,6 @@ function selectSentence (skillObj , mySkillArr , sentenceObj , sentenceArr, sent
         sentenceID = random(stillExistSentences);
       }
       var sentence = sentenceArr[sentenceID];
-
-      console.log('this skill has this many sentences:' , skillName, skillObj[skillName].weight, sentenceObj[sentenceID].length );
 
       var dataObj = ({
         sentence: sentence,

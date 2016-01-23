@@ -1,7 +1,7 @@
 var webPage = require('webpage');
 var page = webPage.create();
 
-var str = "https://slack.com/jobs/69907/application-engineer";
+var str = "http://jobs.jobvite.com/careers/square/job/ovAP1fwF";
 
 page.open(str, function (status) {
   console.log(page.plainText);
