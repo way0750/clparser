@@ -25,10 +25,10 @@ function makeSentence (res, source, mission, lastPara) {
 
   nonTech = nonTech.reduce(function (obj, str) {
     var concernAndAnswer = str.split('||');
-    obj.companyConcerns.push(concernAndAnswer[0].trim() + ' ');
+    obj.companyConcerns.push(concernAndAnswer[0].trim());
     
     var myAnswer = concernAndAnswer[1] ? concernAndAnswer[1] : concernAndAnswer[0];
-    obj.myGeneralSkills.push(myAnswer.trim() + ' ');
+    obj.myGeneralSkills.push(myAnswer.trim());
     return obj;
   }, {companyConcerns: [], myGeneralSkills: []});
 
