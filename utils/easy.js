@@ -159,20 +159,33 @@ function formatSentence (sentenceArr, connectingWordsPath) {
 
 function outputPDF (textObj) {
   var doc = new PDFDocument();
-  doc.fontSize = 12;
-
   var paraFormatObj = {
-    lineGap: 2,
-    paragraphGap: 6,
-    indent: 20
+    lineGap: 3,
+    paragraphGap: 8,
+    indent: 20,
+    align: 'left'
   };
 
   var headOrFootFormat = {
-    lineGap: 2,
-    paragraphGap: 6
+    lineGap: 3,
+    paragraphGap: 8
   };
 
-  if (textObj.address) {doc.text(textObj.address, headOrFootFormat);}
+  doc.rect(57, 50, 500, 65);
+  doc.fillAndStroke('black', 'black');
+  doc.fillColor('white');
+  doc.fontSize(30);
+  doc.text('< Huiqiang Huang />', headOrFootFormat);
+
+  doc.fontSize(12);
+  doc.fillColor('white');
+  doc.text('linkedin.com/in/way0750', 100, 65, {align: 'right', link: 'https://www.linkedin.com/in/way0750'});
+  doc.text('github.com/way0750', 100, 80, {align: 'right', link: 'https://github.com/way0750'});
+  doc.text('way0750huang@gmail.com', 100, 96, {align: 'right', link: 'way0750huang@gmail.com'});
+
+  doc.moveDown(1);
+  doc.fillColor('black');
+  if (textObj.address) {doc.text(textObj.address, 70, 140, headOrFootFormat);}
 
   if (textObj.excitment) {doc.text(textObj.excitment, paraFormatObj);}
   if (textObj.skill) {doc.text(textObj.skill, paraFormatObj);}

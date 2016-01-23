@@ -47,7 +47,7 @@ function makeSentence (res, source, mission, lastPara) {
     companyConcerns: companyConcerns,
     myGeneralSkills: myGeneralSkills,
     myTechSkills: myTechSkills,
-    closingStatement: [lastPara]
+    closingStatement: [lastPara].concat(companyConcerns)
   };
   console.log('--------sending this:\n\n\n', contentObj);
   res.send(contentObj);
