@@ -93,7 +93,6 @@ function makeSentence (skillPathArr, sentencePath, requirement, optionObj) {
 
 function selectSentence (skillObj , mySkillArr , sentenceObj , sentenceArr, sentenceAmountLimit) {
 
-  console.log('\n\n\n-------------------------------\n checking the', sentenceObj, '\n\n');
   return mySkillArr.reduce(function (arr, skillName) {
     if (!skillObj[skillName]) {
       return arr;
@@ -142,14 +141,14 @@ function selectSentence (skillObj , mySkillArr , sentenceObj , sentenceArr, sent
 
 function formatSentence (sentenceArr, connectingWordsPath) {
   var connectingWords;
-  var usingConnect = connectingWordsPath;
-  if (usingConnect) {
+  var shouldUseConnectWords = connectingWordsPath;
+  if (shouldUseConnectWords) {
     connectingWords = parseContent.parseTerms(connectingWordsPath);
   }
   sentenceArr.forEach(function (sentence, index) {
     sentence = sentence.replace(/\s*\[[^\[]+\]\s*/g, ' ');
     if (!/@/.test(sentence)){
-      var curConnect = usingConnect ? connectingWords.shift().toCap() + ', ' : '';
+      var curConnect = shouldUseConnectWords ? connectingWords.shift().toCap() + ', ' : '';
       sentenceArr[index] =  curConnect + sentence;
     }
   });

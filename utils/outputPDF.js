@@ -29,19 +29,22 @@ function outputPDF (textObj) {
 
   doc.moveDown(1);
   doc.fillColor('black');
-  if (textObj.address) {doc.text(textObj.address, 70, 140, headOrFootFormat);}
-
-  if (textObj.excitment) {doc.text(textObj.excitment, paraFormatObj);}
-  if (textObj.skill) {doc.text(textObj.skill, paraFormatObj);}
-  if (textObj.closing) {doc.text(textObj.closing, paraFormatObj);}
-
-  if (textObj.thankYou) {doc.text(textObj.thankYou, paraFormatObj);}
-  if (textObj.myName) {doc.text(textObj.myName, paraFormatObj);}
+  doc.text(textObj.address, 70, 140, headOrFootFormat);
+  doc.text(textObj.excitment, paraFormatObj);
+  doc.text(textObj.skill, paraFormatObj);
+  doc.text(textObj.closing, paraFormatObj);
+  doc.text(textObj.thankYou, paraFormatObj);
+  doc.text(textObj.myName, paraFormatObj);
 
   doc.pipe(fileSystem.createWriteStream('./PDF/'+textObj.company+' Cover Letter.pdf'));
   doc.end();
 }
 
+function makePDF (req, res, next) {
+  outputPDF(req.body);
+  res.send('check local folder');
+}
+
 module.exports = {
-  outputPDF: outputPDF
+  makePDF: makePDF
 };

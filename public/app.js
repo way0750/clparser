@@ -1,6 +1,10 @@
 (function () {
   angular.module('coverLetter', ['ngMaterial'])
-  .controller('coverLetterCTRL',function ($scope, httpAPI, contentFormatter) {
+  .controller('coverLetterCTRL',function ($scope, httpAPI, contentFormatter, PSA) {
+
+    $scope.PSA = PSA.psaObj;
+
+    PSA.safeAnnouncement('job search diesel: 6 digits here we go!!!!');
 
     $scope.coverLetter = {
       company:  '@@@@@',
@@ -10,29 +14,39 @@
 
     $scope.makeCoverLetter = function (source, isUrl) {
       if (!source) {
-        $scope.PSA = 'nothing to parse!';
+        console.log(PSA, $scope.PSA);
+        PSA.badNews('nothing to parse!');
         return;
       }
       if (isUrl && !/http/i.test(source.slice(0, 4))){
         source = 'http://' + source;
       }
-      $scope.PSA = 'thinking......';
+
+      PSA.safeAnnouncement('thinking......');
 
       httpAPI.makeCoverLetter(source, isUrl).then(function (data) {
-        $scope.PSA = 'here you go....';
-        console.log('so what is the new format?:\n', data);
+        PSA.safeAnnouncement('here you go....');
+
+        console.log('parsing link?', isUrl);
+        if (isUrl) {
+          $scope.coverLetter.company = '@@@@@';
+        }
+        $scope.coverLetter.requirement = data.requirement;
         $scope.coverLetter.excitment = contentFormatter.formatSkills(data.excitment);
         $scope.coverLetter.closing = contentFormatter.formatSkills(data.closingStatement);
         $scope.coverLetter.skill = contentFormatter.formatSkills(data.companyConcerns, data.myGeneralSkills, data.myTechSkills);
       });
-      
     };
 
+    $scope.remakeCoverLetter = function (requirement) {
+      console.log(requirement);
+      $scope.makeCoverLetter(requirement, false);
+    };
 
     $scope.outputPDF = function (obj) {
       var allowToOutputPDF = httpAPI.allowToOutputPDF(obj);
       if (!allowToOutputPDF.permission){
-        $scope.PSA = allowToOutputPDF.PSA;
+        PSA.badNews(allowToOutputPDF.PSA);
         return;
       }
 
@@ -41,7 +55,7 @@
       contentFormatter.fixAddressAddCompanyName('Dear', obj, 'Recruitment Team:');
 
       httpAPI.outputPDF(obj).then(function (data) {
-        $scope.PSA=data;
+        PSA.safeAnnouncement(data);
       });
 
     };

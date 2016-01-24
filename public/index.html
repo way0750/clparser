@@ -5,30 +5,44 @@
   <title>easy cover letter</title>
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
 
+  <link rel="stylesheet" href="assets/main.css">
+
 </head>
 <body ng-app='coverLetter' ng-controller='coverLetterCTRL'>
-  <div>
-    <input size="50" placeholder='parse link' ng-model="link"><br>
-    <button ng-click="makeCoverLetter(link, true)">parse link</button><br>
-    <textarea cols="60" rows="7" ng-model="pastedContent"></textarea><br>
-    <button ng-click="makeCoverLetter(pastedContent)">upload requirement</button><br>
-  </div>
-  <h1 ng-show="PSA">{{PSA}}</h1>
-  <pre>Dear <input type="text" size='50' ng-model='coverLetter.company'> recruitment team:</pre><br>
+  <div class = "banner">
+    <div>
+      <input placeholder='parse link' ng-model="link"><br>
+      <button ng-click="makeCoverLetter(link, true)">parse link</button>
+      <button ng-click="remakeCoverLetter(coverLetter.requirement)">re make cover letter</button>
+    </div>
 
-  <div>
-    <textarea cols="100" rows="10" ng-model="coverLetter.excitment"></textarea>
-  </div>
-  <div>
-    <textarea cols="100" rows="10" ng-model="coverLetter.skill"></textarea>
-  </div>
-  <div>
-    <textarea cols="100" rows="10" ng-model="coverLetter.closing"></textarea>
+    <div>
+      <textarea ng-model="pastedContent"></textarea><br>
+      <button ng-click="makeCoverLetter(pastedContent)">upload requirement</button>
+    </div>
+    
   </div>
 
-  <input type="text" size = '50' ng-model="coverLetter.thankYou"><br>
-  <input type="text" size = '50' ng-model="coverLetter.myName"><br>
-  <button ng-click="outputPDF(coverLetter)">good enough!</button><br>
+  <h1 class = "PSA" style = 'background-color: {{PSA.color}}' >{{PSA.msg}}</h1>
+
+  <section class = "coverletter">
+    <pre>Dear <input type="text" size='50' ng-model='coverLetter.company'> recruitment team:</pre><br>
+
+    <div>
+      <textarea cols="100" rows="10" ng-model="coverLetter.excitment"></textarea>
+    </div>
+    <div>
+      <textarea cols="100" rows="10" ng-model="coverLetter.skill"></textarea>
+    </div>
+    <div>
+      <textarea cols="100" rows="10" ng-model="coverLetter.closing"></textarea>
+    </div>
+
+    <input type="text" size = '50' ng-model="coverLetter.thankYou"><br>
+    <input type="text" size = '50' ng-model="coverLetter.myName"><br>
+    <button ng-click="outputPDF(coverLetter)">good enough!</button><br>
+  </section>
+
 </body>
 
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
@@ -41,5 +55,6 @@
 <script src="app.js"></script>
 <script src="services/http.js"></script>
 <script src="services/formatContent.js"></script>
+<script src="services/psa.js"></script>
 
 </html>

@@ -3,6 +3,11 @@ var bodyParser = require('body-parser');
 var controller = require('./controllers/config.js');
 var app = express();
 
+app.use(function (req, res, next) {
+  console.log(req.path);
+  next();
+});
+
 app.use(bodyParser.json());
 
 app.use(express.static('public'));

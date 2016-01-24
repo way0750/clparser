@@ -1,4 +1,5 @@
 var utils = require('../utils/utils.js');
+var pdf = require('../utils/outputPDF.js');
 
 module.exports = {
 
@@ -7,7 +8,7 @@ module.exports = {
   },
 
   makePDF: function (req, res, next) {
-    utils.makePDF(req, res, next);
+    pdf.makePDF(req, res, next);
   }
 
 };

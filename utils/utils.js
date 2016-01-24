@@ -1,28 +1,28 @@
 var fileSystem = require('fs');
+var coverGenerator = require('./coverGenerator.js');
+
 var path = require('path');
 var childProcess = require('child_process');
 var phantomjs = require('phantomjs');
 var binPath = phantomjs.path;
 var barePath = '/Users/Way/repos/coverletter/';
 var childArgs = [ barePath + 'phantomParse.js' ];
-var coverLetter = require('./easy.js');
-var pdf = require('./outputPDF.js');
 
 var contentPaths = {
-  companyConcerns : './content/companyConcernList.txt', 
-  myGeneralSkills: './content/companyConcernSentence.txt',
-  myTechSkills: './content/mytechlist.txt',
-  techSentences: './content/techSentence.txt',
-  connectingWords: './content/connectingWords.txt'
+  companyConcerns : './content/companyConcernList.md', 
+  myGeneralSkills: './content/companyConcernSentence.md',
+  myTechSkills: './content/mytechlist.md',
+  techSentences: './content/techSentence.md',
+  connectingWords: './content/connectingWords.md'
 };
 
-function makeSentence (res, source, mission, lastPara) {
-  var nonTech = coverLetter.makeSentence(
+function makeParagrapObj (res, source, mission, lastPara) {
+  var nonTech = coverGenerator.makeSentence(
     [contentPaths.companyConcerns, contentPaths.myTechSkills],
     contentPaths.myGeneralSkills,
     source);
 
-  nonTech = coverLetter.formatSentence(nonTech);
+  nonTech = coverGenerator.formatSentence(nonTech);
 
   nonTech = nonTech.reduce(function (obj, str) {
     var concernAndAnswer = str.split('||');
@@ -36,21 +36,20 @@ function makeSentence (res, source, mission, lastPara) {
   var companyConcerns = nonTech.companyConcerns;  
   var myGeneralSkills = nonTech.myGeneralSkills;
 
-
-  var myTechSkills = coverLetter.makeSentence(
+  var myTechSkills = coverGenerator.makeSentence(
     [contentPaths.myTechSkills],
     contentPaths.techSentences,
     source);
-  myTechSkills = coverLetter.formatSentence(myTechSkills, contentPaths.connectingWords);
+  myTechSkills = coverGenerator.formatSentence(myTechSkills, contentPaths.connectingWords);
 
   var contentObj = {
+    requirement: source,
     excitment: [mission],
     companyConcerns: companyConcerns,
     myGeneralSkills: myGeneralSkills,
     myTechSkills: myTechSkills,
     closingStatement: [lastPara].concat(companyConcerns)
   };
-  console.log('--------sending this:\n\n\n', contentObj);
   res.send(contentObj);
 }
 
@@ -71,18 +70,12 @@ function parseJobOpening(req, res, next) {
   var lastPara = 'I look forward to hear more detail about@@@ challenges and feature they are focusing on right now@@@@@, and show you how I can contribute to their development. ';
 
   if (req.body.isUrl) {
-    parseByURL(res, source, mission, lastPara, makeSentence);
+    parseByURL(res, source, mission, lastPara, makeParagrapObj);
   } else {
-    makeSentence(res, source, mission, lastPara);
+    makeParagrapObj(res, source, mission, lastPara);
   }
 }
 
-function makePDF (req, res, next) {
-  pdf.outputPDF(req.body);
-  res.send('check local folder');
-}
-
 module.exports = {
-  parseJobOpening : parseJobOpening,
-  makePDF : makePDF
+  parseJobOpening : parseJobOpening
 };
