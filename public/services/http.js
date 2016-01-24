@@ -1,8 +1,9 @@
 (function () {
   angular.module('coverLetter')
-  .factory('httpAPI', function ($http) {
+  .factory('httpAPI', function ($http, PSA) {
 
     var makeCoverLetter = function (source, isUrl) {
+      console.log('being making: at', new Date().valueOf());
       if (isUrl && !/http/i.test(source.slice(0, 4))){
         source = 'http://' + source;
       }
@@ -45,8 +46,6 @@
         return 'something bad happened: ' + err;
       });
     };
-
-
 
     return {
       makeCoverLetter: makeCoverLetter,

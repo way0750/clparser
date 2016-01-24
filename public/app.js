@@ -14,20 +14,19 @@
 
     $scope.makeCoverLetter = function (source, isUrl) {
       if (!source) {
-        console.log(PSA, $scope.PSA);
         PSA.badNews('nothing to parse!');
         return;
       }
+
       if (isUrl && !/http/i.test(source.slice(0, 4))){
         source = 'http://' + source;
       }
 
-      PSA.safeAnnouncement('thinking......');
+      PSA.inProgress('thinking......');
 
       httpAPI.makeCoverLetter(source, isUrl).then(function (data) {
         PSA.safeAnnouncement('here you go....');
-
-        console.log('parsing link?', isUrl);
+        
         if (isUrl) {
           $scope.coverLetter.company = '@@@@@';
         }
@@ -39,7 +38,6 @@
     };
 
     $scope.remakeCoverLetter = function (requirement) {
-      console.log(requirement);
       $scope.makeCoverLetter(requirement, false);
     };
 

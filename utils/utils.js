@@ -16,7 +16,22 @@ var contentPaths = {
   connectingWords: './content/connectingWords.md'
 };
 
+function superlog () {
+  var terminalWidth = process.stdout.columns;
+  var str = '\n\n\n\n   ' + '_'.repeat(terminalWidth-6) + '   \n';
+  var beg1 = ' /' + ' '.repeat(terminalWidth-6) + '\\ \n';
+  var beg2 = '/' + ' '.repeat(terminalWidth-4) + '\\\n';
+  
+  var end1 = '\\' + ' '.repeat(terminalWidth-2) + '/\n';
+  var end2 = '\\' + '_'.repeat(terminalWidth-4) + '/\n\n\n\n';
+ console.log(str, beg1, beg2);
+ console.log.apply(console, arguments);
+ console.log(end1, end2);
+}
+
+
 function makeParagrapObj (res, source, mission, lastPara) {
+  var beg = new Date();
   var nonTech = coverGenerator.makeSentence(
     [contentPaths.companyConcerns, contentPaths.myTechSkills],
     contentPaths.myGeneralSkills,
@@ -50,16 +65,21 @@ function makeParagrapObj (res, source, mission, lastPara) {
     myTechSkills: myTechSkills,
     closingStatement: [lastPara].concat(companyConcerns)
   };
+  superlog('time on making sentences:', new Date() - beg);
   res.send(contentObj);
 }
+
 
 function parseByURL (res, source, mission, lastPara, callback) {
   var script = fileSystem.readFileSync(barePath + 'phantomTemplate.js', 'utf8');
   script = script.replace('xxxx', '"' + source + '"');
   fileSystem.writeFileSync(barePath + 'phantomParse.js', script);
+  var beg = new Date();
+  superlog('this is the requirement:');
 
   childProcess.execFile(binPath, childArgs, function(err, data, stderr) {
-    console.log(data);
+    superlog(data, ' on scraping: ', new Date() - beg);
+
     callback(res, data, mission, lastPara);
   });
 }

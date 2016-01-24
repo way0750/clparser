@@ -54,12 +54,12 @@ body{
 
 .banner {
   position: fixed;
-  height: 5em;
+  height: 7em;
   background-color: black;
   width: 100%;
 }
 
-.banner > div {
+.banner > * {
   display: inline-block;
   width: 40%;
   position: absolute;
@@ -72,13 +72,14 @@ body{
 
 .banner > :last-child {
  right: 5%;
+ color: white;
 }
 
 .banner > :first-child > input {
   width: 100%;
 }
 
-.banner > :last-child > textarea{
+.banner textarea{
   width: 100%;
 }
 
@@ -89,6 +90,7 @@ body{
   min-height: 3em;
   width: 10%;
   background-color: yellow;
+  padding: 0.3em;
 }
 
 .coverletter{

@@ -19,7 +19,13 @@
       psaObj.color = warnning;
     };
 
+    var inProgress = function (msg) {
+      psaObj.msg = msg;
+      psaObj.color = 'yellow';
+    };
+
     return {
+      inProgress: inProgress,
       psaObj: psaObj,
       safeAnnouncement: safeAnnouncement,
       badNews: badNews

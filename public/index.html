@@ -10,17 +10,15 @@
 </head>
 <body ng-app='coverLetter' ng-controller='coverLetterCTRL'>
   <div class = "banner">
-    <div>
-      <input placeholder='parse link' ng-model="link"><br>
+    <form >
+      <textarea placeholder='parse link' ng-model="link"></textarea><br>
       <button ng-click="makeCoverLetter(link, true)">parse link</button>
       <button ng-click="remakeCoverLetter(coverLetter.requirement)">re make cover letter</button>
-    </div>
+      <button ng-click="makeCoverLetter(link)">upload requirement</button>
+    </form>
+  
+    <h1>easy 6-digit cover letter builder</h1>
 
-    <div>
-      <textarea ng-model="pastedContent"></textarea><br>
-      <button ng-click="makeCoverLetter(pastedContent)">upload requirement</button>
-    </div>
-    
   </div>
 
   <h1 class = "PSA" style = 'background-color: {{PSA.color}}' >{{PSA.msg}}</h1>
