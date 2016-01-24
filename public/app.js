@@ -37,6 +37,7 @@
       }
 
       contentFormatter.capitalizeSentences(obj);
+      obj.company = contentFormatter.capitalizeEveryWord(obj.company);
       contentFormatter.fixAddressAddCompanyName('Dear', obj, 'Recruitment Team:');
 
       httpAPI.outputPDF(obj).then(function (data) {

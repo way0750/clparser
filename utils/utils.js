@@ -6,6 +6,7 @@ var binPath = phantomjs.path;
 var barePath = '/Users/Way/repos/coverletter/';
 var childArgs = [ barePath + 'phantomParse.js' ];
 var coverLetter = require('./easy.js');
+var pdf = require('./outputPDF.js');
 
 var contentPaths = {
   companyConcerns : './content/companyConcernList.txt', 
@@ -40,7 +41,7 @@ function makeSentence (res, source, mission, lastPara) {
     [contentPaths.myTechSkills],
     contentPaths.techSentences,
     source);
-  myTechSkills = coverLetter.formatSentence(myTechSkills);
+  myTechSkills = coverLetter.formatSentence(myTechSkills, contentPaths.connectingWords);
 
   var contentObj = {
     excitment: [mission],
@@ -77,7 +78,7 @@ function parseJobOpening(req, res, next) {
 }
 
 function makePDF (req, res, next) {
-  coverLetter.outputPDF(req.body);
+  pdf.outputPDF(req.body);
   res.send('check local folder');
 }
 

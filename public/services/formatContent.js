@@ -23,11 +23,18 @@
       });
     };
 
+    var capitalizeEveryWord = function (str) {
+      return str.replace(/\b\w/g, function (match) {
+        return match.toCap();
+      });
+    };
+
     var fixAddressAddCompanyName = function (left, obj, right) {
       obj.address = left + ' ' + obj.company + ' ' + right;
     };
 
     return {
+      capitalizeEveryWord: capitalizeEveryWord,
       fixAddressAddCompanyName: fixAddressAddCompanyName,
       formatSkills: formatSkills,
       capitalizeSentences: capitalizeSentences
