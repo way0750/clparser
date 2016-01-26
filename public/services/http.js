@@ -26,9 +26,9 @@
       msg.permission = keys.every(function (key) {
         var str = obj[key];
         var noContent = str.length === 0;
-        var stillNeedToEdit = /@/.test(str);
+        var stillNeedToEdit = /[@<>]/.test(str);
         if (noContent) {msg.PSA = 'no content in some of the field';}
-        if (stillNeedToEdit) {msg.PSA = "you still have some @@@@s";}
+        if (stillNeedToEdit) {msg.PSA = "you still have some @, <, or >s";}
         return noContent || stillNeedToEdit ? false : true;
       });
       return msg;
@@ -41,7 +41,7 @@
         url: '/pdf',
         data: obj
       }).then(function (data) {
-        return 'check your new pdf';
+        return 'KILL!!! go get that 6 digits!';
       }).catch(function (err) {
         return 'something bad happened: ' + err;
       });

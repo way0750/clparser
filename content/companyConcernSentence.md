@@ -1,24 +1,27 @@
-#big ass title
+# general
 
-###work with working close work close close collaboration collaborat join team agile scrum lean schedule priori shift high energy high-energy fast pace fast-pace startup start up start-up deliver
-has experience working in agile environment. || been part of teams developing application utilizing the agile development methodology.
+###### work with working close work close close collaboration collaborat join team agile scrum lean schedule priori shift high energy high-energy fast pace fast-pace startup start up start-up deliver
 
-###new feature learn master curio creative innovative ownership responsibility passion eager willing belief work hard
-is a creative and dedicated individual || highly focused on iterating through innovate solutions to deliver target features.
+has experience working in agile environment. ||  I have been designing and buildingfeatures quickly in teams that utilizing the agile workflow. 
 
-###Material Angular, HTML, CSS, jQuery, D3, Backbone, AJAX, MVC beautiful social responsive client side client-side front end front-end user experience user-fac user fac ui ux
-can create interactive front-end for better UX || developed UI interface with high usability and responsiveness.
+###### scal volume fast growing growing growth
 
-#big ass title 002
+excited working in fast pace growth environment || thrive in high energy environment.
 
-###Express, Ruby, SQL, Mongo, Heroku, Mongoose, Passport, Postgre, Sequelize, Node, API, rail, database, data base, RDBMS, server side server-side the full back end back-end
-able to build a solid heavy-duty back-end || implemented a stable back-end for high dependability.
+# tech
 
-###full stack full-stack
+###### Material Angular, HTML, CSS, jQuery, D3, Backbone, AJAX, MVC beautiful social responsive client side client-side front end front-end user experience user-fac user fac ui ux
+
+to create interactive front-end for better UX || I can build full stack applications delivering UI interface with high usability.
+
+###### Express, Ruby, SQL, Mongo, Heroku, Mongoose, Passport, Postgre, Sequelize, Node, API, rail, database, data base, RDBMS, server side server-side the full back end back-end backend
+
+able to build a solid back-end || implement stable back-ends for high dependability. 
+
+###### full stack full-stack fullstack
+
 to work across the stack || been developing full stack applications.
 
-###latest modern
-is knowledgeable of latest development tools || well-versed in modern web-dev technologies
+###### latest modern
 
-###scal volume fast growing growing growth
-excited working in fast pace growth environment || thrive in high energy environment.
+is knowledgeable of latest development tools || well-versed in modern web-dev technologies and practices

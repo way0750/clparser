@@ -15,7 +15,7 @@ function outputPDF (textObj) {
     paragraphGap: 8
   };
 
-  doc.rect(57, 50, 500, 65);
+  doc.rect(57, 50, 500, 87);
   doc.fillAndStroke('black', 'black');
   doc.fillColor('white');
   doc.fontSize(30);
@@ -25,11 +25,12 @@ function outputPDF (textObj) {
   doc.fillColor('white');
   doc.text('linkedin.com/in/way0750', 100, 65, {align: 'right', link: 'https://www.linkedin.com/in/way0750'});
   doc.text('github.com/way0750', 100, 80, {align: 'right', link: 'https://github.com/way0750'});
-  doc.text('way0750huang@gmail.com', 100, 96, {align: 'right', link: 'way0750huang@gmail.com'});
+  doc.text('angel.co/way0750', 100, 96, {align: 'right', link: 'https://angel.co/way0750'});
+  doc.text('way0750huang@gmail.com', 100, 111, {align: 'right', link: 'way0750huang@gmail.com'});
 
   doc.moveDown(1);
   doc.fillColor('black');
-  doc.text(textObj.address, 70, 140, headOrFootFormat);
+  doc.text(textObj.address, 70, 150, headOrFootFormat);
   doc.text(textObj.excitment, paraFormatObj);
   doc.text(textObj.skill, paraFormatObj);
   doc.text(textObj.closing, paraFormatObj);

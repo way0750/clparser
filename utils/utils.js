@@ -1,4 +1,3 @@
-var fileSystem = require('fs');
 var coverGenerator = require('./coverGenerator.js');
 
 var path = require('path');
@@ -6,7 +5,7 @@ var childProcess = require('child_process');
 var phantomjs = require('phantomjs');
 var binPath = phantomjs.path;
 var barePath = '/Users/Way/repos/coverletter/';
-var childArgs = [ barePath + 'phantomParse.js' ];
+var phantomScript = barePath + 'phantomParse.js';
 
 var contentPaths = {
   companyConcerns : './content/companyConcernList.md', 
@@ -41,21 +40,25 @@ function makeParagrapObj (res, source, mission, lastPara) {
 
   nonTech = nonTech.reduce(function (obj, str) {
     var concernAndAnswer = str.split('||');
-    obj.companyConcerns.push(concernAndAnswer[0].trim());
+    obj.companyConcerns.push( '<' + concernAndAnswer[0].trim() + '>');
     
     var myAnswer = concernAndAnswer[1] ? concernAndAnswer[1] : concernAndAnswer[0];
-    obj.myGeneralSkills.push(myAnswer.trim());
+    obj.myGeneralSkills.push( '<' + myAnswer.trim() + '>');
     return obj;
   }, {companyConcerns: [], myGeneralSkills: []});
 
-  var companyConcerns = nonTech.companyConcerns;  
-  var myGeneralSkills = nonTech.myGeneralSkills;
+  var transitionToConcerns = "I understand that you are looking for developers to <<<";
+  var companyConcerns = [transitionToConcerns].concat(nonTech.companyConcerns);  
+  var myGeneralSkills = ['>>>\n\n<<<'].concat(nonTech.myGeneralSkills, '>>>\n\n');
 
   var myTechSkills = coverGenerator.makeSentence(
     [contentPaths.myTechSkills],
     contentPaths.techSentences,
     source);
   myTechSkills = coverGenerator.formatSentence(myTechSkills, contentPaths.connectingWords);
+
+  var techSkillOverView = "<< (beware of the job opening description) Besides the aforementioned technologies, I am also experienced in other commonly used ones like: Express.js, Ruby, Mongo.js, Heroku, Backbone.js, Mongoose.js, PostgreSQL, Sequelize —VS— Angular.js, HTML5, CSS3, jQuery, Angular Material. As a curious developer, I am always interested in learning and using new technologies. >>";
+  myTechSkills = myTechSkills.concat(techSkillOverView);
 
   var contentObj = {
     requirement: source,
@@ -71,13 +74,10 @@ function makeParagrapObj (res, source, mission, lastPara) {
 
 
 function parseByURL (res, source, mission, lastPara, callback) {
-  var script = fileSystem.readFileSync(barePath + 'phantomTemplate.js', 'utf8');
-  script = script.replace('xxxx', '"' + source + '"');
-  fileSystem.writeFileSync(barePath + 'phantomParse.js', script);
   var beg = new Date();
   superlog('this is the requirement:');
 
-  childProcess.execFile(binPath, childArgs, function(err, data, stderr) {
+  childProcess.execFile(binPath, [phantomScript, source], function(err, data, stderr) {
     superlog(data, ' on scraping: ', new Date() - beg);
 
     callback(res, data, mission, lastPara);

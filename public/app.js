@@ -42,7 +42,14 @@
     };
 
     $scope.outputPDF = function (obj) {
-      var allowToOutputPDF = httpAPI.allowToOutputPDF(obj);
+      var allowToOutputPDF = httpAPI.allowToOutputPDF({
+        company: obj.company,
+        thankYou: obj.thankYou,
+        myName: obj.myName,
+        excitment: obj.excitment,
+        closing: obj.closing,
+        skill: obj.skill
+      });
       if (!allowToOutputPDF.permission){
         PSA.badNews(allowToOutputPDF.PSA);
         return;
