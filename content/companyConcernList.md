@@ -72,6 +72,10 @@ new feature
 
 # front-end related stuffs
 
+Ember
+
+Sass
+
 beautiful
 
 social
@@ -101,6 +105,10 @@ ux
 # back-end related stuffs
 
 server side
+
+Redis
+
+HBase
 
 server-side
 

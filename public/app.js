@@ -8,7 +8,7 @@
 
     $scope.coverLetter = {
       company:  '@@@@@',
-      thankYou: "Thank you very much for your time",
+      thankYou: "Thank you very much for your time.\n",
       myName: "Huiqiang Huang"
     };
 
