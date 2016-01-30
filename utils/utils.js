@@ -28,47 +28,21 @@ function superlog () {
  console.log(end1, end2);
 }
 
-
+//make the new function to deal with the new coverGeerator
 function makeParagrapObj (res, source, mission, lastPara) {
-  var beg = new Date();
-  var nonTech = coverGenerator.makeSentence(
-    [contentPaths.companyConcerns, contentPaths.myTechSkills],
-    contentPaths.myGeneralSkills,
-    source);
+  var companyConcerns = coverGenerator.makePragraph(source);
 
-  nonTech = coverGenerator.formatSentence(nonTech);
-
-  nonTech = nonTech.reduce(function (obj, str) {
-    var concernAndAnswer = str.split('||');
-    obj.companyConcerns.push( '<' + concernAndAnswer[0].trim() + '>');
-    
-    var myAnswer = concernAndAnswer[1] ? concernAndAnswer[1] : concernAndAnswer[0];
-    obj.myGeneralSkills.push( '<' + myAnswer.trim() + '>');
-    return obj;
-  }, {companyConcerns: [], myGeneralSkills: []});
-
-  var transitionToConcerns = "I understand that you are looking for developers to <<<";
-  var companyConcerns = [transitionToConcerns].concat(nonTech.companyConcerns);  
-  var myGeneralSkills = ['>>>\n\n<<<'].concat(nonTech.myGeneralSkills, '>>>\n\n');
-
-  var myTechSkills = coverGenerator.makeSentence(
-    [contentPaths.myTechSkills],
-    contentPaths.techSentences,
-    source);
-  myTechSkills = coverGenerator.formatSentence(myTechSkills, contentPaths.connectingWords);
-
-  var techSkillOverView = "<< (beware of the job opening description) Besides the aforementioned technologies, I am also experienced in other commonly used ones like: Express.js, Ruby, MongoDB, Heroku, Backbone.js, Mongoose.js, PostgreSQL, Sequelize —VS— Angular.js, HTML5, CSS3, jQuery, Angular Material. As a curious developer, I am always interested in learning and using new technologies. >>";
-  myTechSkills = myTechSkills.concat(techSkillOverView);
+  console.log(companyConcerns);
+  var techSkillOverView = "\nBesides the aforementioned technologies, I am also experienced in: Ruby, MongoDB, Heroku, Mongoose.js, Sequelize —VS— HTML5, CSS3, jQuery, Angular Material. As a curious developer, I am always interested in learning and using new technologies. >>";
 
   var contentObj = {
     requirement: source,
     excitment: [mission],
-    companyConcerns: companyConcerns,
-    myGeneralSkills: myGeneralSkills,
-    myTechSkills: myTechSkills,
-    closingStatement: [lastPara].concat(companyConcerns)
+    companyConcerns: [companyConcerns, techSkillOverView],
+    myGeneralSkills: [],
+    myTechSkills: [],
+    closingStatement: [lastPara]
   };
-  superlog('time on making sentences:', new Date() - beg);
   res.send(contentObj);
 }
 

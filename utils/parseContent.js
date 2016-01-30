@@ -4,47 +4,37 @@ var parseCatagory = function(str) {
   return str.split(/(?=^#{1,2}[^#])/gm);
 };
 
-var parseSentences = function (path) {
+var removeHash = function (str) {
+  return str.replace(/#/g, '');
+};
+
+var condenceSpaces = function (str) {
+  str = str.trim();
+  return str.replace(/\s+/g, ' ');
+};
+
+var makeKeyAndSentences = function (path) {
   var rawFile = fileSystem.readFileSync(path, 'utf8');
   var categoryArr = parseCatagory(rawFile);
-  var keyWordAndSentences = categoryArr.reduce(function (arr, cataStr) {
-    cataStr = cataStr.split(/(?=#{3,})/);
-    //only keep the lines with ### or more in front or none at all.
-    cataStr = cataStr.filter(function (str) {
-      return /^[^#]|^#{3,}/.test(str.trim());
-    });
-    return arr.concat(cataStr);
-  }, []);
+  return categoryArr.reduce(function (obj, str) {
+    str = str.split('\n');
+    var title = condenceSpaces(removeHash(str[0]));
+    var keywords = condenceSpaces(removeHash(str[1])).split(',');
+    keywords = keywords.map(condenceSpaces);
+    var sentence = str.slice(2).join('\n').trim();
+    var categoryObj = {
+      title: title,
+      keywords: keywords,
+      sentence: sentence
+    };
+    obj[categoryObj.title] = categoryObj;
 
-  keyWordAndSentences = keyWordAndSentences.reduce(function (arr, setStr) {
-    var lines = setStr.split('\n');
-    var keySentenceObj = lines.reduce(function (obj, str) {
-      str = str.trim();
-      if (/^#/.test(str)){
-        obj.keyword = str;
-      } else if (/^\w/.test(str)){
-        obj.sentence.push(str);
-      }
-      return obj;
-    }, {keyword: '', sentence: []});
-
-    var keyedSentenceArr = keySentenceObj.sentence.map(function (str) {
-      return '[ '+ keySentenceObj.keyword +' ] ' + str;
-    });
-
-    return arr.concat(keyedSentenceArr);
-
-  }, []);
-
-  return keyWordAndSentences;
-
+    return obj;
+  }, {});
 };
 
-var parseTerms = function (path) {
-  return fileSystem.readFileSync(path, 'utf8').match(/.+/g);
-};
+// console.log(makeKeyAndSentences('../content/reuse.md'));
 
 module.exports = {
-  parseSentences: parseSentences,
-  parseTerms: parseTerms
+  makeKeyAndSentences: makeKeyAndSentences
 };

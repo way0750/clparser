@@ -47,6 +47,10 @@
       });
     };
 
+    var outputPlaintext = function (obj) {
+      
+    };
+
     return {
       makeCoverLetter: makeCoverLetter,
       allowToOutputPDF: allowToOutputPDF,

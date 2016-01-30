@@ -6,7 +6,7 @@ with experience working in fast pace agile environments. ||  As someone who thri
 
 # tech
 
-###### Ember Material Angular, HTML, CSS, jQuery, D3, Backbone, AJAX, MVC beautiful social responsive client side client-side front end front-end user experience user-fac user fac ui ux Sass frontend
+###### Ember Material Angular, HTML, CSS, jQuery, D3, Backbone, AJAX, MVC, beautiful, social, responsive, client side, client-side, front end, front-end, user experience, user-fac, user fac, ui, ux, Sass, frontend
 
 to create interactive front-end for better UX || I can build full stack applications delivering UI with high usability.
 
