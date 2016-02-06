@@ -28,6 +28,9 @@ function outputPDF (textObj) {
   doc.text('angel.co/way0750', 100, 96, {align: 'right', link: 'https://angel.co/way0750'});
   doc.text('way0750huang@gmail.com', 100, 111, {align: 'right', link: 'way0750huang@gmail.com'});
 
+  doc.fillColor('transparent');
+  doc.text('https://www.linkedin.com/in/way0750.', 266.7, 191.7, {align: 'left', link: 'https://www.linkedin.com/in/way0750'});
+
   doc.moveDown(1);
   doc.fillColor('black');
   doc.text(textObj.address, 70, 150, headOrFootFormat);
